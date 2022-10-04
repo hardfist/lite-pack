@@ -1,7 +1,7 @@
 use clap::{Parser, Subcommand, Args};
 use std::path::PathBuf;
 use anyhow::{Result};
-use crate::build::{build, buildOptions};
+use crate::build::{build, BuildOptions};
 const DEFAULT_CONFIG: &str = "webpack.config.js";
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about=None)]
@@ -23,11 +23,13 @@ pub enum Commands {
 }
 pub fn build_handler(options: &RawOptions) -> Result<()>{
   let cwd = std::env::current_dir()?;
+  tracing::debug!("cwd:{:?}", cwd);
   let root = PathBuf::from(&options.root);
-  let root = cwd.join(root);
+  let root = cwd.join(root).canonicalize().expect("path normalize failed");
   let config = PathBuf::from(&options.config.as_ref().unwrap_or(&DEFAULT_CONFIG.to_string()));
-  let config = cwd.join(config);
-  build(buildOptions{
+  tracing::debug!("config:{:?}", config);
+  let config = root.join(config).canonicalize().expect("config normalize failed");
+  build(BuildOptions{
     context: root.to_string_lossy().to_string(),
     config: config.to_string_lossy().to_string()
   })
