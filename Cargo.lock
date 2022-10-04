@@ -212,6 +212,7 @@ dependencies = [
  "color-eyre",
  "core",
  "tracing",
+ "tracing-error",
 ]
 
 [[package]]
@@ -252,10 +253,12 @@ name = "core"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "color-eyre",
  "criterion",
  "thiserror",
  "tracing",
  "tracing-chrome",
+ "tracing-error",
  "tracing-subscriber",
 ]
 

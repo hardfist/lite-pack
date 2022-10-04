@@ -1,6 +1,7 @@
 use clap::{Parser, Subcommand, Args};
 use std::path::PathBuf;
-use anyhow::{Result};
+use tracing_error::prelude::*;
+use anyhow::{Result,Context};
 use core::build::{build, BuildOptions};
 const DEFAULT_CONFIG: &str = "webpack.config.js";
 #[derive(Parser, Debug)]
@@ -25,7 +26,7 @@ pub fn build_handler(options: &RawOptions) -> Result<()>{
   let cwd = std::env::current_dir()?;
   tracing::debug!("cwd:{:?}", cwd);
   let root = PathBuf::from(&options.root);
-  let root = cwd.join(root).canonicalize().expect("path normalize failed");
+  let root = cwd.join(root).canonicalize()?;
   let config = PathBuf::from(&options.config.as_ref().unwrap_or(&DEFAULT_CONFIG.to_string()));
   tracing::debug!("config:{:?}", config);
   let config = root.join(config).canonicalize().expect("config normalize failed");
