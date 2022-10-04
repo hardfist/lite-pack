@@ -4,7 +4,7 @@ mod build;
 mod log;
 use clap::Parser;
 use cli::{Cli, run};
-use tracing::{info, instrument};
+use tracing::{instrument};
 
 use crate::log::init_tracing;
 #[instrument]

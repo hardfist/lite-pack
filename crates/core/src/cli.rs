@@ -2,7 +2,7 @@ use clap::{Parser, Subcommand, Args};
 use std::path::PathBuf;
 use anyhow::{Result};
 use crate::build::{build, buildOptions};
-const default_config: &str = "webpack.config.js";
+const DEFAULT_CONFIG: &str = "webpack.config.js";
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about=None)]
 pub struct Cli {
@@ -25,7 +25,7 @@ pub fn build_handler(options: &RawOptions) -> Result<()>{
   let cwd = std::env::current_dir()?;
   let root = PathBuf::from(&options.root);
   let root = cwd.join(root);
-  let config = PathBuf::from(&options.config.as_ref().unwrap_or(&default_config.to_string()));
+  let config = PathBuf::from(&options.config.as_ref().unwrap_or(&DEFAULT_CONFIG.to_string()));
   let config = cwd.join(config);
   build(buildOptions{
     context: root.to_string_lossy().to_string(),
@@ -41,9 +41,6 @@ pub fn run(cli:Cli) -> Result<()>{
       Commands::Build(_options) => {
         build_handler(_options)?;
         tracing::debug!("{:?}", _options);
-      },
-      _ => {
-        unreachable!("not supported commands");
       }
   }
   Ok(())
