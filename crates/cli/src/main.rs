@@ -1,12 +1,9 @@
 mod cli;
-mod error;
-mod build;
-mod log;
 use clap::Parser;
 use cli::{Cli, run};
 use tracing::{instrument};
+use core::log::init_tracing;
 
-use crate::log::init_tracing;
 #[instrument]
 fn main(){
   let guard = init_tracing();

@@ -1,7 +1,7 @@
 use clap::{Parser, Subcommand, Args};
 use std::path::PathBuf;
 use anyhow::{Result};
-use crate::build::{build, BuildOptions};
+use core::build::{build, BuildOptions};
 const DEFAULT_CONFIG: &str = "webpack.config.js";
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about=None)]
