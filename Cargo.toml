@@ -1,6 +1,5 @@
 [workspace]
 members = [
     "crates/core",
-    "crates/bench",
     "crates/cli"
 ]
