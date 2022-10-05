@@ -9,7 +9,7 @@ crate-type = ["lib"]
 
 [dependencies]
 thiserror = "1.0.37"
-anyhow ="1.0.65"
+anyhow = { version = "1.0.65", features = ["backtrace"]}
 
 tracing = "0.1"
 tracing-subscriber = {version="0.3", features=["env-filter"]}

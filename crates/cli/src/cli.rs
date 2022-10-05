@@ -1,6 +1,6 @@
 use clap::{Parser, Subcommand, Args};
 use std::path::PathBuf;
-use anyhow::{Result,Context};
+use anyhow::{Result, Context};
 use core::build::{build};
 use core::config::Config;
 
@@ -24,7 +24,6 @@ pub enum Commands {
     Build(RawOptions),
 }
 pub fn build_handler(options: &RawOptions) -> Result<()>{
-  let pb = indicatif::ProgressBar::new(100);
   let cwd = std::env::current_dir()?;
   tracing::debug!("cwd:{:?}", cwd);
   let root = PathBuf::from(&options.root);
@@ -33,7 +32,7 @@ pub fn build_handler(options: &RawOptions) -> Result<()>{
   tracing::debug!("config:{:?}", config);
   let config = root.join(config).canonicalize().expect("config normalize failed");
   let config_content = std::fs::read_to_string(config)?;
-  let config: Config = serde_json::from_str(&config_content)?;
+  let config = serde_json::from_str::<Config>(&config_content).with_context(|| format!("load config error"))?;
   build(config)?;
   Ok(())
 }
