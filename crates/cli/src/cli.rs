@@ -23,6 +23,7 @@ pub enum Commands {
     Build(RawOptions),
 }
 pub fn build_handler(options: &RawOptions) -> Result<()>{
+  let pb = indicatif::ProgressBar::new(100);
   let cwd = std::env::current_dir()?;
   tracing::debug!("cwd:{:?}", cwd);
   let root = PathBuf::from(&options.root);
@@ -33,7 +34,9 @@ pub fn build_handler(options: &RawOptions) -> Result<()>{
   build(BuildOptions{
     context: root.to_string_lossy().to_string(),
     config: config.to_string_lossy().to_string()
-  })
+  })?;
+  pb.finish_with_message("done");
+  Ok(())
 }
 pub fn run(cli:Cli) -> Result<()>{
   match &cli.command {
