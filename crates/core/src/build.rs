@@ -1,13 +1,11 @@
 use anyhow::{Result};
-use crate::{Compilation,Compiler, CompilerOptions};
-#[derive(Debug)]
-pub struct BuildOptions {
-  pub context: String,
-  pub config: String,
-}
-pub fn build(_options: BuildOptions) -> Result<()>{
-  tracing::debug!("build options:{:?}", _options);
-  let compiler = Compiler::new(CompilerOptions {  });
+use crate::{Compilation,Compiler, CompilerOptions, config::Config};
+
+pub fn build(config: Config) -> Result<()>{
+  tracing::debug!("build config:{:?}",config);
+  let compiler = Compiler::new(CompilerOptions { 
+    entry: config.entry,
+   });
   compiler.compile();
   Ok(())
 }

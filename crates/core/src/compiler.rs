@@ -1,11 +1,15 @@
-use std::sync::Arc;
+use std::{sync::Arc, collections::HashMap};
 
 use tracing::{instrument};
 
 use crate::compilation::{Compilation, CompilationParams};
+#[derive(Debug, Clone)]
+pub struct EntryItem {
+  pub path: String,
+}
 #[derive(Debug)]
 pub struct CompilerOptions {
-
+  pub entry: HashMap<String,String>
 }
 #[derive(Debug)]
 pub struct Compiler {
@@ -31,6 +35,8 @@ impl Compiler {
     CompilationParams{}
   }
   pub fn compile(&self){
+    let deps = self.compilation.entry_deps();
+    dbg!(deps);
     self.compilation.make();
     self.compilation.seal();
 

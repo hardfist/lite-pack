@@ -1,8 +1,9 @@
 use clap::{Parser, Subcommand, Args};
 use std::path::PathBuf;
-use tracing_error::prelude::*;
 use anyhow::{Result,Context};
-use core::build::{build, BuildOptions};
+use core::build::{build};
+use core::config::Config;
+
 const DEFAULT_CONFIG: &str = "webpack.config.js";
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about=None)]
@@ -31,11 +32,9 @@ pub fn build_handler(options: &RawOptions) -> Result<()>{
   let config = PathBuf::from(&options.config.as_ref().unwrap_or(&DEFAULT_CONFIG.to_string()));
   tracing::debug!("config:{:?}", config);
   let config = root.join(config).canonicalize().expect("config normalize failed");
-  build(BuildOptions{
-    context: root.to_string_lossy().to_string(),
-    config: config.to_string_lossy().to_string()
-  })?;
-  pb.finish_with_message("done");
+  let config_content = std::fs::read_to_string(config)?;
+  let config: Config = serde_json::from_str(&config_content)?;
+  build(config)?;
   Ok(())
 }
 pub fn run(cli:Cli) -> Result<()>{
