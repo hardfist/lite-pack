@@ -212,6 +212,8 @@ dependencies = [
  "color-eyre",
  "core",
  "indicatif",
+ "serde",
+ "serde_json",
  "tracing",
  "tracing-error",
 ]
