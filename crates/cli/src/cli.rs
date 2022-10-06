@@ -3,6 +3,7 @@ use std::path::PathBuf;
 use anyhow::{Result, Context};
 use core::build::{build};
 use core::config::Config;
+use quick_js::{Context as JsContext, JsValue};
 
 const DEFAULT_CONFIG: &str = "webpack.config.js";
 #[derive(Parser, Debug)]
@@ -30,9 +31,15 @@ pub fn build_handler(options: &RawOptions) -> Result<()>{
   let root = cwd.join(root).canonicalize()?;
   let config = PathBuf::from(&options.config.as_ref().unwrap_or(&DEFAULT_CONFIG.to_string()));
   tracing::debug!("config:{:?}", config);
-  let config = root.join(config).canonicalize().expect("config normalize failed");
-  let config_content = std::fs::read_to_string(config)?;
-  let config = serde_json::from_str::<Config>(&config_content).with_context(|| format!("load config error"))?;
+  let config_path = root.join(config).canonicalize().expect("config normalize failed");
+  
+  let root = config_path.parent().unwrap();
+  let config_content = std::fs::read_to_string(&config_path)?;
+  let context = JsContext::new().expect("create context failed");
+  let value = context.eval(&format!("var __dirname = \"{}\";{}{}{}",root.display(),"var module = {exports: {}};", config_content,"JSON.stringify(module.exports)"))?;
+  let js_string = value.into_string().expect("generate string failed");
+  let config = serde_json::from_str::<Config>(&js_string).with_context(|| format!("failed to load config from {}", config_path.display()))?;
+  dbg!(&config);
   build(config)?;
   Ok(())
 }
